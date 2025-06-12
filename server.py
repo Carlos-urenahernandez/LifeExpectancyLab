@@ -1,62 +1,38 @@
+# flask --app data_server run
 from flask import Flask
-from flask import request
 from flask import render_template
-import json
+from flask import request
 
+import json
 app = Flask(__name__, static_url_path='', static_folder='static')
-with open("Data/data.json", "r") as f:
-    data1 = json.load(f)
-brooklynData = []
-bronxData = []
-manhattanData = []
-queensData = []
-statenIslandData = []
-minVal = len(data1["BROOKLYN"]["2000"])
-maxVal = 0
-avg = 0
-for years in range (2000, 2022):
-    maxVal = max(maxVal, len(data1["BROOKLYN"][str(years)]), len(data1["BRONX"][str(years)]), len(data1["MANHATTAN"][str(years)]), len(data1["QUEENS"][str(years)]), len(data1["STATEN ISLAND"][str(years)]))
-    minVal = min(minVal, len(data1["BROOKLYN"][str(years)]), len(data1["BRONX"][str(years)]), len(data1["MANHATTAN"][str(years)]), len(data1["QUEENS"][str(years)]), len(data1["STATEN ISLAND"][str(years)]))
-    brooklynData.append(len(data1["BROOKLYN"][str(years)]))
-    bronxData.append(len(data1["BRONX"][str(years)]))
-    manhattanData.append(len(data1["MANHATTAN"][str(years)]))
-    queensData.append(len(data1["QUEENS"][str(years)]))
-    statenIslandData.append(len(data1["STATEN ISLAND"][str(years)]))
-    avg+= (len(data1["BROOKLYN"][str(years)]) + len(data1["BRONX"][str(years)]) + len(data1["MANHATTAN"][str(years)]) + len(data1["QUEENS"][str(years)]) + len(data1["STATEN ISLAND"][str(years)]))
-avg = avg/(21*5)
-print(avg)
+with open('labs/LifeExpectancyLab/data/life_expectancy.json') as f:
+        data = json.load(f)
+minVal = min(list(data['Canada'].values()) + list(data['United States'].values()) + list(data['Mexico'].values()))
+maxVal = max(list(data['Canada'].values()) + list(data['United States'].values()) + list(data['Mexico'].values()))
+
 @app.route('/')
-def home():
-    return render_template("about.html") 
-@app.route('/index')    
 def index():
-    return render_template("index.html")
-@app.route('/macro')
-def macro():
-    return render_template("macro.html", average = avg, data = data1, bkData = brooklynData, bxData = bronxData, maData = manhattanData, quData = queensData, siData = statenIslandData)
-@app.route('/micro')
-def micro():
-    year = request.args.get('year', default='2000', type=str)
-    quColor = int(len(data1["QUEENS"][year])- minVal) / (maxVal - minVal) * 100
-    bkColor = int(len(data1["BROOKLYN"][year])- minVal) / (maxVal - minVal) * 100
-    bxColor = int(len(data1["BRONX"][year])- minVal) / (maxVal - minVal) * 100
-    maColor = int(len(data1["MANHATTAN"][year])- minVal) / (maxVal - minVal) * 100
-    siColor = int(len(data1["STATEN ISLAND"][year])- minVal) / (maxVal - minVal) * 100
-    Eight = (8000- minVal) / (maxVal - minVal) * 100
-    Sixteen = (16000- minVal) / (maxVal - minVal) * 100
-    Twentyfour = (24000- minVal) / (maxVal - minVal) * 100
-    Thirtytwo = (32000- minVal) / (maxVal - minVal) * 100
-    Forty = (40000- minVal) / (maxVal - minVal) * 100
-    average = (avg-minVal) / (maxVal - minVal) * 100
-    tempList = ["Brooklyn", "Bronx", "Manhattan", "Queens", "Staten Island"]
-    values = [len(data1["BROOKLYN"][year]), len(data1["BRONX"][year]), len(data1["MANHATTAN"][year]), len(data1["QUEENS"][year]), len(data1["STATEN ISLAND"][year])]
-    minimum = tempList[values.index(min(values))]
-    maximum = tempList[values.index(max(values))]
-    maxdeviation = max(abs(len(data1["BROOKLYN"][year]) - avg), abs(len(data1["BRONX"][year]) - avg), abs(len(data1["MANHATTAN"][year]) - avg), abs(len(data1["QUEENS"][year]) - avg), abs(len(data1["STATEN ISLAND"][year]) - avg))
-    maxB = tempList[[abs(len(data1["BROOKLYN"][year]) - avg), abs(len(data1["BRONX"][year]) - avg), abs(len(data1["MANHATTAN"][year]) - avg), abs(len(data1["QUEENS"][year]) - avg), abs(len(data1["STATEN ISLAND"][year]) - avg)].index(maxdeviation)]
-    mindeviation  = min(abs(len(data1["BROOKLYN"][year]) - avg), abs(len(data1["BRONX"][year]) - avg), abs(len(data1["MANHATTAN"][year]) - avg), abs(len(data1["QUEENS"][year]) - avg), abs(len(data1["STATEN ISLAND"][year]) - avg))
-    minB = tempList[[abs(len(data1["BROOKLYN"][year]) - avg), abs(len(data1["BRONX"][year]) - avg), abs(len(data1["MANHATTAN"][year]) - avg), abs(len(data1["QUEENS"][year]) - avg), abs(len(data1["STATEN ISLAND"][year]) - avg)].index(mindeviation)]
-    return render_template("micro.html", lowB = minB,highB = maxB, maxDeviation = int(maxdeviation), minDeviation = int(mindeviation), avg= average, yr = year, min = minimum, max = maximum, quColor = quColor, bkColor = bkColor, bxColor = bxColor, maColor = maColor, siColor = siColor, eight = Eight, sixteen = Sixteen, twentyfour = Twentyfour, thirtytwo = Thirtytwo, forty = Forty)
-    
-if __name__ == "__main__":
-    app.run(debug=True)
+    print(data["Canada"].values())
+    avg = (sum(list(data["Canada"].values())) + sum(list(data["United States"].values())) + sum(list(data["Mexico"].values()))) / (len(list(data["Canada"].values())) )    
+    return render_template('index.html', caData = list(data['Canada'].values()), usData = list(data['United States'].values()), mxData = list(data['Mexico'].values()), average = avg)
+
+@app.route('/year')
+def year():
+    currentYear = request.args.get('year')
+   
+    caColor = int((data['Canada'][currentYear]-minVal)/(maxVal-minVal)*100)
+    usColor = int((data['United States'][currentYear]-minVal)/(maxVal-minVal)*100)
+    mxColor = int((data['Mexico'][currentYear]-minVal)/(maxVal - minVal)*100)
+
+    fiftyYears = (50-minVal) / (maxVal - minVal) * 100
+    sixtyYears = (60-minVal) / (maxVal - minVal) * 100
+    seventyYears = (70-minVal) / (maxVal - minVal) * 100
+    eightyYears = (80-minVal) / (maxVal - minVal) * 100
+    ninetyYears = (90-minVal) / (maxVal - minVal) * 100
+
+    mxexpectancy = data['Mexico'][currentYear]
+    usexpectancy = data['United States'][currentYear]
+    caexpectancy = data['Canada'][currentYear]
+    return render_template('year.html', year = currentYear, caSaturation = caColor, usSaturation = usColor, mxSaturation = mxColor, fifty = fiftyYears, sixty = sixtyYears, seventy = seventyYears, eighty = eightyYears, ninety = ninetyYears, usExpectancy = usexpectancy, caExpectancy = caexpectancy, mxExpectancy = mxexpectancy)
+
+app.run(debug=True)

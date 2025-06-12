@@ -1,0 +1,61 @@
+
+<html>
+<head>
+  <title>Life Expectancy {{year}}</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+  .Canada { fill: hsl(0, {{ caSaturation }}%, 50%); }
+  .Mexico { fill: hsl(0, {{ mxSaturation }}%, 50%); }
+  .US { fill: hsl(0, {{ usSaturation }}%, 50%); }
+</style>
+</head>
+<body>
+ 
+</div>
+    
+  <h1>Life Expectancy {{year}} - Carlos Urena</h1>
+  
+
+  <div id="north_america">
+    {% include 'north_america.svg' %}
+  </div>
+  
+  <div style=" display:flex; justify-content: center; margin-top: 24px; margin-bottom: 24px;">
+  <span>
+     <span style="display: inline-block; width: 40px; height: 40px; background: hsl(0, {{fifty}}%, 50%); border: 1px solid #333; vertical-align: middle; margin-left: 8px;"></span>
+    50 Yrs
+  </span>
+  <span>
+    <span style="display: inline-block; width: 40px; height: 40px; background: hsl(0, {{sixty}}%, 50%); border: 1px solid #333; vertical-align: middle; margin-left: 8px;"></span>
+    60 Yrs
+  </span>
+  <span>
+    <span style="display: inline-block; width: 40px; height: 40px; background: hsl(0, {{seventy}}%, 50%); border: 1px solid #333; vertical-align: middle; margin-left: 8px;"></span>
+    70 Yrs
+  </span>
+  <span>
+    <span style="display: inline-block; width: 40px; height: 40px; background: hsl(0, {{eighty}}%, 50%); border: 1px solid #333; vertical-align: middle; margin-left: 8px;"></span>
+    80 Yrs
+  </span>
+  <span>
+    <span style="display: inline-block; width: 40px; height: 40px; background: hsl(0, {{ninety}}%, 50%); border: 1px solid #333; vertical-align: middle; margin-left: 8px;"></span>
+    90 Yrs
+  </span>
+</div>
+  
+  </div>
+  <li>
+    Average life expectancy in the US: <span class="US">{{ usExpectancy }} years</span>
+  </li>
+  <li> 
+    Average life expectancy in Mexico: <span class="Mexico">{{ mxExpectancy }} years</span>
+  </li>
+  <li>
+    Average life expectancy in Canada: <span class="Canada">{{ caExpectancy }} years</span>
+
+  </li>
+  <footer>
+    All data from <a href="https://data.worldbank.org/indicator/SP.DYN.LE00.IN?locations=MX-US-CA"> The World Bank</a>.
+  </footer>
+</body>
+</html>
